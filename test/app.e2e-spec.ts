@@ -15,10 +15,15 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/:sourceId (GET)', () => {
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .get('/fhir/DB59CC')
+      .expect(200);
+  });
+
+  it(':sourceId/:conceptId',() => {
+    return request(app.getHttpServer())
+      .get('/fhir/DB59CC/MDT-88678f')
+      .expect(200);
   });
 });
