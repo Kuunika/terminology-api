@@ -18,19 +18,15 @@ export class SourcesController {
         description: 'Returns a source and a paginated list of all concepts associated with that source',
         type: null
       })
-    async getSource(@Req() req: Request, @Res() res: Response,@Param('sourceId') sourceId: string, @Query('filterTerm') term = '', @Query('pageNumber') pageNumber = 1){
-      const source = await this.sourceService.getSource(sourceId.toUpperCase(), pageNumber, term);
-      res.header("Current-Page", source.currentPage.toString());
-      res.header("Total-Number-Of-Concepts", source.totalNumberOfConcepts.toString());
-      res.header("Total-Number-Of-Pages", source.totalNumberOfPages.toString());
-       
-      const body = {
-        "sourceHeadings": source.sourceHeadings,
-        "results": source.results,
-        "breadcrumb": source.breadcrumb
-      }
-
-      return res.send(body);
+    async getSource(@Param('sourceId') sourceId: string, @Query('filterTerm') term = '', @Query('pageNumber') pageNumber = 1):  Promise<{
+      sourceHeadings: string[];
+      results: any[];
+      breadcrumb: string;
+      currentPage: number;
+      totalNumberOfConcepts: number;
+      totalNumberOfPages: number;
+    }>{
+     return this.sourceService.getSource(sourceId.toUpperCase(), pageNumber, term);
     }
         
 
