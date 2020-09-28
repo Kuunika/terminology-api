@@ -12,7 +12,7 @@ export class SourcesService {
 
   constructor(private readonly searchService: SearchService, private readonly oclService: OclService) {}
 
-  async getSource(sourceId: string, pageNumber = 1, filterTerm?: string): Promise<Source> {
+  async getSource(sourceId: string, pageNumber = 1, filterTerm?: string) {
     const categoryFromOCL =  await this.oclService.requestCategoryFromOcl(sourceId);
     const { data, ...payload} =  await this.oclService.requestAllConceptsFromCategory(categoryFromOCL.extras.Route, pageNumber);
 

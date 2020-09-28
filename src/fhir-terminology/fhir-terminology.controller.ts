@@ -29,7 +29,7 @@ export class FhirTerminologyController {
     @Get(':sourceId/:conceptId')
     @ApiResponse({
         status: 200,
-        description: 'Returns a specifics concept map',
+        description: 'Returns a specifics concept map fhir resource',
         type: null
       })
     getSourceConcepts(@Param('sourceId') sourceId: string, @Param('conceptId') conceptId: string):Promise<ConceptMap>{

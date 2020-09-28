@@ -1,0 +1,9 @@
+version: '3'
+services:
+  mw-covid-api:
+    container_name: mw-terminology-service
+    restart: always
+    image: kuunika/terminology-service
+    ports:
+      - '3001:3001'
+    env_file: ./path/to/.env

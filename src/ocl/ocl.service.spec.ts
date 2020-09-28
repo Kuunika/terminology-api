@@ -10,7 +10,18 @@ describe('OclService', () => {
     'extras',
     'names',
     'descriptions',
-    'id'
+    'id',
+    'retired',
+    'source',
+    'source_url',
+    'owner',
+    'owner_type',
+    'owner_url',
+    'version',
+    'created_on',
+    'updated_on',
+    'version_created_on',
+    'version_created_by'
   ];
 
   beforeEach(async () => {
