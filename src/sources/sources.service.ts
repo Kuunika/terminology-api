@@ -12,17 +12,19 @@ export class SourcesService {
 
   constructor(private readonly searchService: SearchService, private readonly oclService: OclService) {}
 
-  async getSource(sourceId: string, pageNumber = 1, filterTerm?: string) {
+  async getSource(sourceId: string, pageNumber = 1, limit = 10, filterTerm?: string) {
     const categoryFromOCL =  await this.oclService.requestCategoryFromOcl(sourceId);
-    const { data, ...payload} =  await this.oclService.requestAllConceptsFromCategory(categoryFromOCL.extras.Route, pageNumber);
+    const { data, ...payload} =  await this.oclService.requestAllConceptsFromCategory(categoryFromOCL.extras.Route, pageNumber, limit, filterTerm);
 
+    /*
     if(filterTerm !== '') {
       return {
         ...payload,
         ...await this.filterConcepts(categoryFromOCL, data, filterTerm)
       };
     }
-    
+    */
+
     return {
       ...payload,
       ...await this.createSourceObject(categoryFromOCL, data),

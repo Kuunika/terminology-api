@@ -3,6 +3,7 @@ import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 import * as axios from 'axios';
 import { ConceptFromOCL } from '../interfaces/concept-from-ocl.interface';
 import { CategoryFromOCL } from "../interfaces/category-from-ocl.interface";
+import * as qs from 'qs';
 require('dotenv').config();
 
 @Injectable()
@@ -19,22 +20,24 @@ export class OclService {
 
     async requestAllCategoriesFromOcl(): Promise<CategoryFromOCL[]>{
         const oclCategoriesUrl: string = process.env.OCL_API + process.env.OCL_CATEGORIES_API_URL + 'concepts?verbose=true&limit=0'
+        console.log(oclCategoriesUrl);
         try {
 
             const axiosRequest = await axios.default.get<CategoryFromOCL[]>(oclCategoriesUrl,this.createAxiosRequestConfigurations());
             return axiosRequest.data;
 
         } catch (error) {
-
-            console.error(error.response.statusText);
-            this.responseStatusFromOcl(error.response.status);
+            console.log(error);
+            console.error(error?.response?.statusText);
+            this.responseStatusFromOcl(error?.response?.status);
 
         }   
     }
 
-    async requestCategoryFromOcl(categoryId: string): Promise<CategoryFromOCL>{
-        try {
+    async requestCategoryFromOcl(categoryId: string,): Promise<CategoryFromOCL>{
+        
 
+        try {
             const oclCategoriesUrl: string = process.env.OCL_API + process.env.OCL_CATEGORIES_API_URL + `concepts/${categoryId}?verbose=true`
             const axiosRequest = await axios.default.get<CategoryFromOCL>(oclCategoriesUrl,this.createAxiosRequestConfigurations());
             return axiosRequest.data;
@@ -47,10 +50,20 @@ export class OclService {
         }
     }
 
-    async requestAllConceptsFromCategory(sourceUrl: string, pageNumber=1){
+    async requestAllConceptsFromCategory(sourceUrl: string, pageNumber=1, limit = 10, searchTerm?: string){
+        const queryParams = {
+            verbose: true,
+            page: pageNumber,
+            limit
+        }
+
+        if(searchTerm){
+            queryParams['q'] = searchTerm;
+        }
+
         try {
 
-            const oclConceptsUrl = process.env.OCL_API + sourceUrl + `concepts?limit=${10}&page=${pageNumber}&verbose=true`;
+            const oclConceptsUrl = process.env.OCL_API + sourceUrl + `/concepts?${qs.stringify(queryParams)}`;
             
             const axiosRequest = await axios.default.get<ConceptFromOCL[]>(oclConceptsUrl,this.createAxiosRequestConfigurations());
             const oclConceptsPayload = {

@@ -18,7 +18,7 @@ export class SourcesController {
         description: 'Returns a source and a paginated list of all concepts associated with that source',
         type: null
       })
-    async getSource(@Param('sourceId') sourceId: string, @Query('filterTerm') term = '', @Query('pageNumber') pageNumber = 1):  Promise<{
+    async getSource(@Param('sourceId') sourceId: string, @Query('filterTerm') term = '', @Query('pageNumber') pageNumber = 1, @Query('limit') limit = 10):  Promise<{
       sourceHeadings: string[];
       results: any[];
       breadcrumb: string;
@@ -26,7 +26,7 @@ export class SourcesController {
       totalNumberOfConcepts: number;
       totalNumberOfPages: number;
     }>{
-     return this.sourceService.getSource(sourceId.toUpperCase(), pageNumber, term);
+     return this.sourceService.getSource(sourceId.toUpperCase(), pageNumber, limit, term);
     }
         
 
