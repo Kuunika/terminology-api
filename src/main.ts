@@ -8,7 +8,14 @@ async function bootstrap() {
   const version = process.env.TERMINOLOGY_SERVICE_API_VERSION;
 
   const app = await NestFactory.create(AppModule);
-  
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: true
+  });
+
   const options = new DocumentBuilder()
     .setTitle('Terminology Service example')
     .setDescription('TS Description')
@@ -16,8 +23,8 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
-  app.setGlobalPrefix(`ts/api/${version}`);
+  app.setGlobalPrefix(`api/${version}`);
 
-  await app.listen(3001);
+  await app.listen(3333);
 }
 bootstrap();
