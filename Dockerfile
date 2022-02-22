@@ -1,12 +1,14 @@
 FROM node:12 as building
 WORKDIR /usr/src/app
-COPY package.json .
+COPY package*.json ./
 RUN npm install --only=prod
-COPY ./dist .
+COPY ./ ./
+RUN npm run build
 
 FROM node:12-alpine
-CMD tail -f /dev/null
-COPY --from=building /usr/src/app /usr/src/app
 WORKDIR /usr/src/app
-EXPOSE 3001
-CMD [ "node", "main.js" ]
+COPY --from=building /usr/src/app/package*.json ./
+RUN npm install --only=prod
+COPY --from=building /usr/src/app/dist /usr/src/app/dist
+EXPOSE 3000
+CMD [ "node", "dist/main.js" ]
