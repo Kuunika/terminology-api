@@ -82,7 +82,7 @@ export class OclService {
         data: axiosRequest.data,
         currentPage: pageNumber,
         totalNumberOfConcepts: +axiosRequest.headers.num_found,
-        totalNumberOfPages: Math.ceil(axiosRequest.headers.num_found / 10),
+        totalNumberOfPages: Math.ceil(+axiosRequest.headers.num_found / 10),
       };
 
       return oclConceptsPayload;
