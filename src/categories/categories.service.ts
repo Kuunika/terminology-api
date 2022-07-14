@@ -1,47 +1,46 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { CategoryFromOCL } from '../interfaces/category-from-ocl.interface';
-import { Category } from '../interfaces/lib/category.interface'
+import { Category } from '../interfaces/lib/category.interface';
 import { OclService } from '../ocl/ocl.service';
-import { createCategoriesDescriptionsArray } from "./categories-helper/categories.helper";
-require('dotenv').config();
+import { createCategoriesDescriptionsArray } from './categories-helper/categories.helper';
 
 @Injectable()
 export class CategoriesService {
-  
   constructor(private readonly oclService: OclService) {}
 
   async getAllCategories(): Promise<Category[]> {
-      return this.buildCategoriesTreeFromBreadcrumb(
-        await this.oclService.requestAllCategoriesFromOcl()
-      );
+    return this.buildCategoriesTreeFromBreadcrumb(
+      await this.oclService.requestAllCategoriesFromOcl(),
+    );
   }
 
   buildCategoriesTreeFromBreadcrumb(
-    categoriesFromOcl: CategoryFromOCL[]
+    categoriesFromOcl: CategoryFromOCL[],
   ): Category[] {
     const categories: Category[] = [];
     const breadcrumbs = this.buildBreadcrumbObject(categoriesFromOcl);
 
-    breadcrumbs.forEach(breadcrumb =>
+    breadcrumbs.forEach((breadcrumb) =>
       this.buildCategoriesTree(
         categories,
         breadcrumb.breadcrumb.split('/'),
         breadcrumb.id,
         //createCategoriesDescriptionsArray(breadcrumb.descriptions),
-        breadcrumb.icons
-      )
+        breadcrumb.icons,
+      ),
     );
 
     return categories;
   }
 
   buildBreadcrumbObject(categoriesFromOcl: CategoryFromOCL[]) {
-    return categoriesFromOcl.map(concept => {
+    return categoriesFromOcl.map((concept) => {
       return {
         breadcrumb: concept.extras.Category,
         id: concept.id,
         descriptions: concept.extras.Descriptions,
-        icons: (() => concept.extras.Icon.split(','))()
+        icons: (() => concept.extras.Icon.split(','))(),
       };
     });
   }
@@ -50,8 +49,6 @@ export class CategoriesService {
     TODO: When adding the description and Icons copy the same thing that was done with the bread crumb where a reducing list is continually passed down.
   */
 
-
-
   buildCategoriesTree(
     categories: Category[],
     breadcrumbArray: string[],
@@ -59,7 +56,6 @@ export class CategoriesService {
     icons: string[],
     descriptions?: any,
   ) {
-
     // Base Case - Checks to see if bread crumb array is complete
     if (breadcrumbArray.length === 0) {
       return categories;
@@ -70,14 +66,12 @@ export class CategoriesService {
     // gets description for category
     //const description = descriptions.find(descriptionsArray => currentBreadcrumbPath in descriptionsArray);
 
-
     // checks to see if the current depth of the array has an element with the same name as the bread crumb element
     const existingElementIndex = categories.findIndex(
-      category => category.categoryTitle === currentBreadcrumbPath
+      (category) => category.categoryTitle === currentBreadcrumbPath,
     );
     // if element does not exist then creates a new category object.
     if (existingElementIndex === -1) {
-      
       categories.push({
         categoryTitle: currentBreadcrumbPath,
         id: breadcrumbArray.length === 0 ? id : null,
@@ -93,18 +87,16 @@ export class CategoriesService {
         breadcrumbArray,
         id,
         [],
-        'null'
+        'null',
       );
-
     } else {
-      
       // otherwise makes recursive function call made with existing category object
       this.buildCategoriesTree(
         categories[existingElementIndex].categories,
         breadcrumbArray,
         id,
         [],
-        'null'
+        'null',
       );
     }
   }

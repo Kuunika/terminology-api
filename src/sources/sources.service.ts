@@ -4,8 +4,7 @@ import { OclService } from '../ocl/ocl.service';
 import { CategoryFromOCL } from "../interfaces/category-from-ocl.interface";
 import { ConceptFromOCL } from "../interfaces/concept-from-ocl.interface";
 import { Source } from "../interfaces/lib/source.interface";
-import { Category } from "../interfaces/lib/category.interface";
-require('dotenv').config();
+import { Category } from '../interfaces/lib/category.interface';
 
 @Injectable()
 export class SourcesService {

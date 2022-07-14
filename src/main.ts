@@ -1,20 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as dotenv from "dotenv";
-dotenv.config();
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-  const version = process.env.TERMINOLOGY_SERVICE_API_VERSION;
-
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: true,
     methods: 'GET,HEAD',
     preflightContinue: false,
     optionsSuccessStatus: 204,
-    credentials: true
+    credentials: true,
   });
+
+  const config = app.get<ConfigService>(ConfigService);
 
   const options = new DocumentBuilder()
     .setTitle('Terminology Service example')
@@ -23,8 +22,10 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
-  app.setGlobalPrefix(`api/${version}`);
-
-  await app.listen(3333);
+  app.setGlobalPrefix(
+    `api/${config.get<string>('TERMINOLOGY_SERVICE_API_VERSION')}`,
+  );
+  const PORT = config.get<number>('PORT');
+  await app.listen(PORT);
 }
 bootstrap();

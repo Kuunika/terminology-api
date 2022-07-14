@@ -3,14 +3,15 @@ import * as axios from 'axios';
 import { ConceptFromOCL } from '../interfaces/concept-from-ocl.interface';
 import { CategoryFromOCL } from '../interfaces/category-from-ocl.interface';
 import * as qs from 'qs';
-require('dotenv').config();
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class OclService {
+  constructor(private readonly config: ConfigService) {}
   private createAxiosRequestConfigurations() {
     return {
       headers: {
-        Authorization: process.env.OCL_API_KEY,
+        Authorization: this.config.get<string>('OCL_API_KEY'),
         'Content-Type': 'application/json',
       },
     };
@@ -18,10 +19,9 @@ export class OclService {
 
   async requestAllCategoriesFromOcl(): Promise<CategoryFromOCL[]> {
     const oclCategoriesUrl: string =
-      process.env.OCL_API +
-      process.env.OCL_CATEGORIES_API_URL +
+      this.config.get<string>('OCL_API') +
+      this.config.get<string>('OCL_CATEGORIES_API_URL') +
       'concepts?verbose=true&limit=0';
-    console.log(oclCategoriesUrl);
     try {
       const axiosRequest = await axios.default.get<CategoryFromOCL[]>(
         oclCategoriesUrl,
@@ -38,8 +38,8 @@ export class OclService {
   async requestCategoryFromOcl(categoryId: string): Promise<CategoryFromOCL> {
     try {
       const oclCategoriesUrl: string =
-        process.env.OCL_API +
-        process.env.OCL_CATEGORIES_API_URL +
+        this.config.get<string>('OCL_API') +
+        this.config.get<string>('OCL_CATEGORIES_API_URL') +
         `concepts/${categoryId}?verbose=true`;
       const axiosRequest = await axios.default.get<CategoryFromOCL>(
         oclCategoriesUrl,
@@ -70,7 +70,7 @@ export class OclService {
 
     try {
       const oclConceptsUrl =
-        process.env.OCL_API +
+        this.config.get<string>('OCL_API') +
         sourceUrl +
         `/concepts?${qs.stringify(queryParams)}`;
 
@@ -98,7 +98,7 @@ export class OclService {
   ): Promise<ConceptFromOCL> {
     try {
       const oclConceptsUrl =
-        process.env.OCL_API +
+        this.config.get<string>('OCL_API') +
         sourceUrl +
         `/concepts/${conceptId}` +
         '?verbose=true';
