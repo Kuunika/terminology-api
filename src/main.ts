@@ -14,6 +14,9 @@ async function bootstrap() {
   });
 
   const config = app.get<ConfigService>(ConfigService);
+  app.setGlobalPrefix(
+    `api/${config.get<string>('TERMINOLOGY_SERVICE_API_VERSION')}`,
+  );
 
   const options = new DocumentBuilder()
     .setTitle('Terminology Service example')
@@ -22,9 +25,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
-  app.setGlobalPrefix(
-    `api/${config.get<string>('TERMINOLOGY_SERVICE_API_VERSION')}`,
-  );
+  
   const PORT = config.get<number>('PORT');
   await app.listen(PORT);
 }
